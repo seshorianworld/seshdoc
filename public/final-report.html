@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Final Report</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3.11.0/dist/email.min.js"></script>
+    <script>
+      window.onload = () => {
+        try {
+          emailjs.init("wzp41_WCdy4yHP-jq"); // Replace with your actual public key
+          console.log("EmailJS initialized successfully.");
+        } catch (error) {
+          console.error("Error initializing EmailJS:", error);
+        }
+      };
+    </script>
+
+    <style>
+      /* Spinner animation for loading */
+      .spinner {
+        border: 8px solid #f3f3f3;
+        border-top: 8px solid #3498db;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 2s linear infinite;
+        display: none;
+        margin: 20px auto;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Final Report</h1>
+      <div id="spinner" class="spinner"></div>
+      <div id="reportContent"></div>
+      <form id="emailForm">
+        <input
+          type="email"
+          id="email"
+          placeholder="Recipient's email"
+          required
+        />
+        <button type="submit">Send Report</button>
+      </form>
+      <div id="responseMessage"></div>
+    </div>
+
+    <script>
+      // Handle email sending with EmailJS
+      document
+        .getElementById("emailForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = document.getElementById("email").value;
+
+          // Display spinner
+          const spinner = document.getElementById("spinner");
+          spinner.style.display = "block";
+
+          const responseMessage = document.getElementById("responseMessage");
+          responseMessage.textContent = ""; // Clear previous messages
+
+          try {
+            // Fetch data displayed on the page
+            const clientName = document
+              .querySelector("#reportContent p:nth-child(1)")
+              .textContent.split(": ")[1];
+            const shiftDate = document
+              .querySelector("#reportContent p:nth-child(2)")
+              .textContent.split(": ")[1];
+            const shiftPeriod = document
+              .querySelector("#reportContent p:nth-child(3)")
+              .textContent.split(": ")[1];
+            const rewrittenLog =
+              document.getElementById("finalEditedReport").textContent;
+
+            const templateParams = {
+              clientName,
+              shiftDate,
+              shiftPeriod,
+              rewrittenLog,
+            };
+
+            console.log("Sending email with Template Params:", templateParams);
+
+            // Send email using EmailJS
+            const result = await emailjs.send(
+              "Seshdoc", // Your service ID
+              "template_ef8rm1c", // Your template ID
+              templateParams
+            );
+
+            console.log("EmailJS Response:", result);
+
+            responseMessage.textContent = "Report sent successfully!";
+            responseMessage.style.color = "green";
+          } catch (error) {
+            console.error("Error sending email:", error);
+
+            // Provide detailed feedback for the error
+            if (error.text) {
+              responseMessage.textContent = `Failed to send report: ${error.text}`;
+            } else {
+              responseMessage.textContent = "Failed to send report.";
+            }
+
+            responseMessage.style.color = "red";
+          } finally {
+            // Hide spinner
+            spinner.style.display = "none";
+          }
+        });
+
+      // Fetch and display the final report on page load
+      async function loadReport() {
+        document.getElementById("spinner").style.display = "block";
+
+        try {
+          const response = await fetch("/api/final-report-data");
+          const data = await response.json();
+
+          document.getElementById("spinner").style.display = "none";
+
+          if (data.error) {
+            document.getElementById("reportContent").textContent = data.error;
+          } else {
+            document.getElementById("reportContent").innerHTML = `
+            <p><strong>Client Name:</strong> ${data.clientName}</p>
+            <p><strong>Shift Date:</strong> ${data.shiftDate}</p>
+            <p><strong>Shift Period:</strong> ${data.shiftPeriod}</p>
+            <p><strong>Final Edited Report:</strong></p>
+            <p id="finalEditedReport">${data.rewrittenLog}</p>
+            <button id="editBtn">Edit Report</button>
+          `;
+          }
+        } catch (error) {
+          console.error("Error fetching report data:", error);
+          document.getElementById("spinner").style.display = "none";
+          document.getElementById("reportContent").textContent =
+            "Failed to load report.";
+        }
+      }
+
+      loadReport();
+    </script>
+  </body>
+</html>

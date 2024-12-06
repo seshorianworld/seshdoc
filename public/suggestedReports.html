@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Suggested Reports</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Suggested Reports</h1>
+
+      <!-- Tabs for Reports -->
+      <div class="tabs">
+        <div class="tab active" id="incidentReportTab">Incident Report</div>
+        <div class="tab" id="behaviorReportTab">Behavior Report</div>
+        <div class="tab" id="outingReportTab">Outing Report</div>
+        <div class="tab" id="oneOnOneReportTab">One-to-One Report</div>
+        <div class="tab" id="appointmentReportTab">Appointment Report</div>
+      </div>
+
+      <!-- Display Box for the Selected Tab Content -->
+      <div class="report-display-box">
+        <h2 id="reportTitle">Incident Report</h2>
+        <p id="reportContent">There is no Incident report generated yet.</p>
+        <div class="actions-container">
+          <button onclick="generateReport('incident')">Generate</button>
+          <button onclick="saveReport()">Save</button>
+          <button onclick="shareReport()">Share</button>
+          <button
+            class="modal-trigger"
+            onclick="openDetailsModal('Details', 'Detailed information about the report.')"
+          >
+            View Details
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Details Modal -->
+    <div class="modal-overlay" id="detailsModal">
+      <div class="modal-content">
+        <span class="close-button" onclick="closeDetailsModal()">&times;</span>
+        <h2 id="detailsModalTitle">Details</h2>
+        <p id="detailsModalBody">
+          This is the modal content. It can be dynamically updated.
+        </p>
+      </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div id="feedbackModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeFeedbackModal()">&times;</span>
+        <h2 id="feedbackModalTitle">Feedback</h2>
+        <p id="feedbackModalBody">This is feedback from the system.</p>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

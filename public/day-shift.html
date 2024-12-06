@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Day Shift Documentation</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <!-- Include Flatpickr CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <button class="back-btn" id="backBtn">Back</button>
+      <h1>Day Shift Documentation</h1>
+      <form id="logForm">
+        <label for="clientName">Client Name:</label>
+        <input
+          type="text"
+          id="clientName"
+          name="clientName"
+          required
+          placeholder="Enter client name"
+        />
+
+        <label for="shiftDate">Shift Date:</label>
+        <input
+          type="text"
+          id="shiftDate"
+          name="shiftDate"
+          placeholder="DD/MM/YYYY"
+          required
+        />
+
+        <label for="shiftPeriod">Shift Period:</label>
+        <select id="shiftPeriod" name="shiftPeriod" required>
+          <option value="8am-12pm">8am - 12pm</option>
+          <option value="12pm-4pm">12pm - 4pm</option>
+          <option value="4pm-8pm">4pm - 8pm</option>
+        </select>
+
+        <label for="logEntry">Log Entry:</label>
+        <textarea id="logEntry" name="logEntry" rows="6" required></textarea>
+
+        <div class="buttons">
+          <button id="submitBtn" type="button">Submit</button>
+          <button type="reset">Clear</button>
+        </div>
+      </form>
+
+      <!-- Spinner for Submission -->
+      <div id="spinner" class="spinner hidden"></div>
+    </div>
+
+    <!-- Include Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Initialize Flatpickr on #shiftDate
+        flatpickr("#shiftDate", {
+          dateFormat: "d/m/Y", // DD/MM/YYYY format
+          defaultDate: new Date(), // Optional: Set today's date as default
+        });
+      });
+    </script>
+    <script src="/script.js"></script>
+  </body>
+</html>

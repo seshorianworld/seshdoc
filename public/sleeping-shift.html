@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sleeping Shift Report</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Sleeping Shift Report</h1>
+      <form id="logForm">
+        <input type="text" id="shiftDate" placeholder="Shift Date" required />
+        <input
+          type="text"
+          id="shiftPeriod"
+          placeholder="Shift Period"
+          required
+        />
+        <textarea id="logEntry" placeholder="Log Entry" required></textarea>
+        <input type="text" id="clientName" placeholder="Client Name" required />
+        <button type="submit">Submit Log</button>
+      </form>
+      <div id="responseMessage"></div>
+
+      <div id="reportContent"></div>
+      <form id="emailForm">
+        <input
+          type="email"
+          id="email"
+          placeholder="Recipient's email"
+          required
+        />
+        <button type="submit">Send Report</button>
+      </form>
+      <div id="emailResponseMessage"></div>
+    </div>
+    <script>
+      document
+        .getElementById("logForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const shiftDate = document.getElementById("shiftDate").value;
+          const shiftPeriod = document.getElementById("shiftPeriod").value;
+          const logEntry = document.getElementById("logEntry").value;
+          const clientName = document.getElementById("clientName").value;
+
+          const responseMessage = document.getElementById("responseMessage");
+
+          const data = {
+            shiftDate,
+            shiftPeriod,
+            logEntry,
+            clientName,
+          };
+
+          try {
+            const response = await fetch("/submit-log", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+              responseMessage.textContent = "Log submitted successfully!";
+            } else {
+              responseMessage.textContent = `Error: ${result.error}`;
+            }
+          } catch (error) {
+            responseMessage.textContent = `Error: ${error.message}`;
+          }
+        });
+
+      window.onload = async () => {
+        const response = await fetch("/api/final-report-data");
+        const data = await response.json();
+
+        if (data.error) {
+          document.getElementById("reportContent").textContent = data.error;
+        } else {
+          document.getElementById("reportContent").innerHTML = `
+            <p><strong>Client Name:</strong> ${data.clientName}</p>
+            <p><strong>Shift Date:</strong> ${data.shiftDate}</p>
+            <p><strong>Shift Period:</strong> ${data.shiftPeriod}</p>
+            <p><strong>Rewritten Report:</strong></p>
+            <p>${data.rewrittenLog}</p>
+          `;
+        }
+      };
+
+      document
+        .getElementById("emailForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = document.getElementById("email").value;
+          const emailResponseMessage = document.getElementById(
+            "emailResponseMessage"
+          );
+
+          const response = await fetch("/send-email", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email }),
+          });
+
+          const result = await response.json();
+          if (response.ok) {
+            emailResponseMessage.textContent = "Report sent successfully!";
+          } else {
+            emailResponseMessage.textContent = `Error: ${result.error}`;
+          }
+        });
+    </script>
+  </body>
+</html>
